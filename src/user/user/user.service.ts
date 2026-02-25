@@ -5,10 +5,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma/prisma.service';
-import { CreateUserDto } from './create-user.dto';
+import { PrismaService } from '../../prisma/prisma/prisma.service';
+import { CreateUserDto } from './create.user.dto';
 import { UserController } from './user.controller';
-import { PaginatedUserResponse } from './create-paginationResponse.dto';
+import { PaginatedUserResponse } from './create.pagination.response.dto';
 
 @Injectable()
 export class UserService {

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { CreateUserDto } from './create-user.dto';
+import { CreateUserDto } from './create.user.dto';
 
 export class PaginatedUserResponse {
   @ApiProperty()

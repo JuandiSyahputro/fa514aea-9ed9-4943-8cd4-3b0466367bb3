@@ -23,8 +23,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { PaginatedUserResponse } from './create-paginationResponse.dto';
-import { CreateUserDto } from './create-user.dto';
+import { PaginatedUserResponse } from './create.pagination.response.dto';
+import { CreateUserDto } from './create.user.dto';
 import { UserService } from './user.service';
 
 @ApiTags('User')
@@ -74,13 +74,19 @@ export class UserController {
     description: 'Internal server error',
   })
   async findAll(
-    @Query('first_name') firstName: 'asc' | 'desc',
-    @Query('last_name') lastName: 'asc' | 'desc',
-    @Query('position') position: 'asc' | 'desc',
+    @Query('first_name') firstNameOrder: 'asc' | 'desc',
+    @Query('last_name') lastNameOrder: 'asc' | 'desc',
+    @Query('position') positionOrder: 'asc' | 'desc',
     @Query('page') page: number = 1,
     @Query('size') size: number = 10,
   ): Promise<PaginatedUserResponse> {
-    return await this.user.findAll(firstName, lastName, position, page, size);
+    return this.user.findAll(
+      firstNameOrder,
+      lastNameOrder,
+      positionOrder,
+      page,
+      size,
+    );
   }
 
   @Post()
@@ -88,100 +94,24 @@ export class UserController {
   @ApiConsumes('application/json')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(NoFilesInterceptor())
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        first_name: {
-          type: 'string',
-          example: '',
-        },
-        last_name: {
-          type: 'string',
-          example: '',
-        },
-        position: {
-          type: 'string',
-          example: '',
-        },
-        phone_number: {
-          type: 'string',
-          example: '',
-        },
-        email: {
-          type: 'string',
-          example: '',
-        },
-      },
-      required: [
-        'first_name',
-        'last_name',
-        'position',
-        'phone_number',
-        'email',
-      ],
-    },
-    description: 'Create user',
-  })
-  @ApiCreatedResponse({
-    description: 'User created',
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal server error',
-  })
+  @ApiBody({ type: CreateUserDto, description: 'Create user' })
+  @ApiCreatedResponse({ description: 'User created' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   async create(@Body() user: CreateUserDto): Promise<User> {
     return await this.user.create(user);
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Update user' })
-  @ApiParam({
-    name: 'id',
-    type: 'integer',
-  })
+  @ApiParam({ name: 'id', type: 'integer' })
   @ApiConsumes('application/json')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(NoFilesInterceptor())
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        first_name: {
-          type: 'string',
-          example: '',
-        },
-        last_name: {
-          type: 'string',
-          example: '',
-        },
-        position: {
-          type: 'string',
-          example: '',
-        },
-        phone_number: {
-          type: 'string',
-          example: '',
-        },
-        email: {
-          type: 'string',
-          example: '',
-        },
-      },
-    },
-    description: 'Update user',
-  })
-  @ApiOkResponse({
-    description: 'User updated',
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal server error',
-  })
+  @ApiBody({ type: CreateUserDto, description: 'Update user' })
+  @ApiOkResponse({ description: 'User updated' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   async update(@Body() user: User, @Param('id') id: number): Promise<User> {
     return await this.user.update(user, id);
   }
